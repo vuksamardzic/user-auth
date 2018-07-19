@@ -1,4 +1,16 @@
 const User = require('./user.model');
+const JWT = require('jsonwebtoken');
+const { secret } = require('./../../../config');
+
+
+const signToken = user => {
+  return JWT.sign({
+    iss: 'vuk samardzic',
+    sub: user.id,
+    iat: new Date().getTime(),
+    exp: Math.floor(Date.now() / 1000) + (60 * 60)
+  }, secret);
+};
 
 const controllers = {
   getOne: async (req, res, next) => {
@@ -25,7 +37,9 @@ const controllers = {
       }
 
       const newUser = await User.create(req.body);
-      res.json({ message: `User [${newUser.name}] created.` });
+      const token = signToken(newUser);
+
+      res.status(200).json({ token });
     } catch (e) {
       next(e);
     }
