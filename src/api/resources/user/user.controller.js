@@ -13,6 +13,13 @@ const signToken = user => {
 };
 
 const controllers = {
+  secret: async (req, res, next) => {
+    try {
+      res.json({ secret: true });
+    } catch (e) {
+      next(e);
+    }
+  },
   getOne: async (req, res, next) => {
     try {
 
