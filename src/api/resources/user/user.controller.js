@@ -1,18 +1,24 @@
 const User = require('./user.model');
 const JWT = require('jsonwebtoken');
-const { secret } = require('./../../../config');
+const { secret, expireTime } = require('./../../../config');
 
 
 const signToken = user => {
   return JWT.sign({
-    iss: 'vuk samardzic',
-    sub: user.id,
-    iat: new Date().getTime(),
-    exp: Math.floor(Date.now() / 1000) + (60 * 60)
-  }, secret);
+    iss: 'vuk samardžić <samardzic.vuk@gmail.com>',
+    sub: user.id
+  }, secret, { expiresIn: expireTime });
 };
 
 const controllers = {
+  login: async (req, res, next) => {
+    try {
+      const token = signToken(req.user);
+      res.status(200).json({ token });
+    } catch (e) {
+      next(e);
+    }
+  },
   secret: async (req, res, next) => {
     try {
       res.json({ secret: true });
