@@ -12,6 +12,7 @@ userRouter.route('/')
   .delete(controller.deleteAll);
 
 userRouter.route('/secret')
+  .post(passport.authenticate('local', { session: false }), controller.login)
   .get(passport.authenticate('jwt', { session: false }), controller.secret);
 
 module.exports = userRouter;
