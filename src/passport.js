@@ -30,8 +30,19 @@ passport.use(new LocalStrategy({
     usernameField: 'email'
   },
   async (email, password, done) => {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return done(null, false);
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return done(null, false);
+      }
+
+      const match = await user.isCorrectPassword(password);
+      if (!match) {
+        return done(null, false);
+      }
+
+      done(null, user);
+    } catch (e) {
+      done(e, false);
     }
   }));
